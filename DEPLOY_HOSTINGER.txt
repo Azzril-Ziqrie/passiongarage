@@ -1,0 +1,191 @@
+=====================================================================
+ TUTORIAL DEPLOY PASSIONGARAGE KE HOSTINGER
+=====================================================================
+
+Ringkas:
+  - Repo GitHub : https://github.com/YOUR-GITHUB-USER/passiongarage  (PRIVATE)
+  - Branch      : main
+  - Beranda dikunci password "passiongarage" (lokal DAN Hostinger).
+    Setelah login muncul pilihan: Storefront / Admin dashboard.
+    Mau dibuka untuk publik saat launching: lihat bagian I.
+
+---------------------------------------------------------------------
+ A. SEBELUM DEPLOY (di komputer)
+---------------------------------------------------------------------
+ 1. Pastikan semua perubahan sudah di-push:
+        git status
+        git push origin main
+ 2. Pastikan repo "passiongarage" di GitHub berstatus PRIVATE, karena
+    config/secrets.php ikut ter-commit (isi: password DB, PayPal, SMTP).
+
+---------------------------------------------------------------------
+ B. BUAT DATABASE DI HOSTINGER (hPanel)
+---------------------------------------------------------------------
+ 1. hPanel -> Databases -> Management (MySQL Databases).
+ 2. Buat database + user baru. Hostinger menambah prefix otomatis:
+        Database : NAMA_DATABASE_HOSTINGER
+        User     : u584945443_azril
+        Password : (yang kamu isi di form)
+ 3. Klik "Buat" dan pastikan user terhubung ke database itu.
+ 4. Nilai ini sudah ada di config/secrets.php (DB_HOST, DB_NAME,
+    DB_USER, DB_PASS). Kalau kamu mengganti password di Hostinger,
+    ubah juga DB_PASS di config/secrets.php lalu push lagi.
+
+---------------------------------------------------------------------
+ C. IMPOR DATABASE
+---------------------------------------------------------------------
+ 1. hPanel -> Databases -> phpMyAdmin -> Enter.
+ 2. Pilih database NAMA_DATABASE_HOSTINGER di sisi kiri.
+ 3. Tab "Import" -> pilih file simple.sql dari folder project
+    -> klik "Import" / "Go".
+ 4. Pastikan tabel muncul (products, orders, settings, dst).
+
+---------------------------------------------------------------------
+ D. PASANG KODE DARI GITHUB
+---------------------------------------------------------------------
+ 1. hPanel -> Websites -> Manage -> Git.
+ 2. Repository  : https://github.com/YOUR-GITHUB-USER/passiongarage.git
+    Branch      : main
+    Install path: kosongkan (= public_html)
+    Repo private -> pakai deploy key: salin SSH key yang ditampilkan
+    Hostinger, lalu GitHub -> Settings repo -> Deploy keys -> Add
+    (read-only cukup).
+ 3. Klik "Create" lalu "Deploy".
+ 4. (Opsional) Aktifkan Auto Deployment lewat webhook supaya setiap
+    push otomatis ter-deploy.
+
+ 5. PERUBAHAN DATABASE OTOMATIS (tanpa phpMyAdmin): setiap file di
+    folder migrations/*.php dijalankan sekali oleh request pertama yang
+    masuk setelah deploy (kolom warna, foto per warna, dll), lalu
+    dicatat di tabel schema_migrations. Impor simple.sql (bagian C)
+    cukup SEKALI saat database masih kosong. Kalau ada migrasi gagal
+    (mis. user DB tanpa izin ALTER), pesannya ada di error_log.
+    Perubahan skema berikutnya: tambah satu file di migrations/ yang
+    mengembalikan function (PDO $pdo): void dan aman dijalankan ulang.
+
+ ALTERNATIF tanpa Git: Files -> File Manager -> upload ZIP isi project
+ ke public_html, lalu Extract.
+
+---------------------------------------------------------------------
+ E. CEK PENGATURAN PHP / FOLDER
+---------------------------------------------------------------------
+ 1. hPanel -> Advanced -> PHP Configuration: pilih PHP 8.1 atau lebih.
+    Aktifkan ekstensi: pdo_mysql, curl, mbstring, gd, openssl.
+ 2. Folder vendor/ (Composer):
+      - Kalau tidak ikut ter-deploy dan ada di .gitignore, jalankan
+        lewat SSH:  composer install --no-dev
+      - Atau upload folder vendor/ dari komputer lewat File Manager.
+ 3. Folder upload (assets/images/..., dll) harus bisa ditulis
+    (permission 755 / 775).
+
+---------------------------------------------------------------------
+ F. PAYPAL
+---------------------------------------------------------------------
+ 1. config/database.php: PAYPAL_MODE = 'live' (sudah live).
+ 2. Client ID & Secret ada di config/secrets.php
+    (PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET) -> harus kredensial LIVE.
+ 3. Di developer.paypal.com pastikan domain sudah benar dan Apple Pay /
+    Google Pay diaktifkan untuk akun live.
+
+---------------------------------------------------------------------
+ G. SSL & DOMAIN
+---------------------------------------------------------------------
+ 1. hPanel -> Security -> SSL: aktifkan (Let's Encrypt / gratis).
+ 2. Paksa HTTPS (Force HTTPS) supaya PayPal & Apple Pay jalan.
+
+---------------------------------------------------------------------
+ H. TES SETELAH LIVE
+---------------------------------------------------------------------
+ [ ] Buka https://domainmu.com -> muncul kolom password. Masukkan
+     "passiongarage" -> pilihan Storefront / Admin dashboard.
+ [ ] Produk, kategori, dan gambar muncul.
+ [ ] Tambah ke keranjang -> checkout -> tombol PayPal muncul.
+ [ ] Transaksi kecil PayPal berhasil, email invoice terkirim.
+ [ ] https://domainmu.com/admin/login.php bisa login admin.
+ [ ] Ganti password admin dari dashboard (minimal 10 karakter).
+
+---------------------------------------------------------------------
+ I. PENGATURAN KUNCI BERANDA (PASSWORD GATE)
+---------------------------------------------------------------------
+ - Aktif atau tidak ditentukan kunci SITE_LOCK di config/secrets.php:
+        'SITE_LOCK' => '1'  -> beranda minta password "passiongarage",
+                               lalu pilihan Storefront / Admin dashboard
+        'SITE_LOCK' => ''   -> beranda langsung terbuka (untuk publik)
+ - Saat ini: '1' (terkunci) di lokal dan di Hostinger.
+ - Saat resmi launching: ubah jadi '' di config/secrets.php,
+   commit, push, lalu Deploy ulang di hPanel.
+ - Ganti password gate: ubah SITE_LOCK_PASSWORD di
+   includes/site_gate.php.
+ - CATATAN: yang dikunci hanya beranda (index). Halaman lain
+   (shop, checkout, dst.) tetap bisa dibuka lewat URL langsung.
+
+---------------------------------------------------------------------
+ K. TUTORIAL: HUBUNGKAN HOSTINGER KE GITHUB (GIT DEPLOY)
+---------------------------------------------------------------------
+ Repo   : YOUR-GITHUB-USER/passiongarage   (PRIVATE)
+ Branch : main
+ Menu   : hPanel -> Websites -> Manage -> Advanced -> Git
+
+ PERSIAPAN
+ 1. Kosongkan folder tujuan. File Manager -> public_html -> hapus file
+    bawaan Hostinger (default.php, index.html, dst). Aktifkan "Show
+    hidden files" supaya file berawalan titik ikut terlihat.
+    Git deploy GAGAL kalau folder tujuan tidak kosong.
+ 2. Pastikan semua perubahan terakhir sudah di-push ke GitHub.
+
+ CARA 1 - SSH + DEPLOY KEY (paling pasti jalan untuk repo private)
+ 1. hPanel -> Git -> Create a new repository.
+ 2. Repository : git@github.com:YOUR-GITHUB-USER/passiongarage.git
+    Branch     : main
+    Install path: kosongkan (= public_html)
+ 3. Klik Create. Hostinger menampilkan sebuah SSH KEY (ssh-rsa/ed25519).
+    Salin seluruh key itu.
+ 4. GitHub -> repo passiongarage -> Settings -> Deploy keys
+    -> Add deploy key. Title: Hostinger. Tempel key. Biarkan
+    "Allow write access" TIDAK dicentang. Klik Add key.
+ 5. Kembali ke hPanel -> klik Deploy. Tunggu sampai berstatus sukses.
+
+ CARA 2 - APLIKASI GITHUB "HOSTINGER"
+ 1. hPanel -> Git -> pilih "Connect with GitHub" dan izinkan.
+ 2. GitHub -> Settings -> Applications -> Installed GitHub Apps
+    -> Hostinger -> Configure.
+ 3. Repository access: pilih "Only select repositories", tambahkan
+    YOUR-GITHUB-USER/passiongarage, lalu klik SAVE.
+ 4. Kembali ke hPanel, refresh / Reconnect, pilih repo dan branch
+    main, lalu Deploy.
+ Catatan: repo harus ada di akun yang sama dengan tempat aplikasi
+ diinstal, dan nama repo persis "passiongarage".
+
+ AUTO DEPLOY (setiap push langsung naik ke hosting)
+ 1. Di hPanel -> Git, buka repo yang sudah dibuat -> salin "Webhook URL".
+ 2. GitHub -> repo -> Settings -> Webhooks -> Add webhook:
+        Payload URL  : (Webhook URL dari hPanel)
+        Content type : application/json
+        Events       : Just the push event
+ 3. Simpan. Mulai sekarang: git push -> hosting ter-update otomatis.
+
+ TROUBLESHOOTING
+ - "destination path is not empty"  -> kosongkan public_html (langkah 1).
+ - "Permission denied (publickey)"   -> deploy key belum ditambahkan
+                                        atau salah repo.
+ - "Repository not found"            -> aplikasi GitHub belum diberi
+                                        akses repo (Cara 2 langkah 3).
+ - Branch tidak ditemukan            -> tulis persis
+                                        main.
+ - Gagal / timeout di tengah         -> coba Deploy sekali lagi (repo
+                                        besar: vendor/ + gambar).
+ - Tetap gagal                       -> pakai ZIP: upload lewat File
+                                        Manager lalu Extract (bagian D).
+
+---------------------------------------------------------------------
+ J. SETELAH LAUNCHING (KEAMANAN)
+---------------------------------------------------------------------
+ - Ganti password database Hostinger dengan yang panjang & acak, lalu
+   update DB_PASS di config/secrets.php.
+ - Rotate Client Secret PayPal kalau pernah ditempel di chat/tempat
+   lain.
+ - Jangan jadikan repo public selama secrets.php ada di dalamnya.
+ - Kalau error "Koneksi database gagal": cek DB_HOST/NAME/USER/PASS
+   di config/secrets.php dan pastikan user DB terhubung ke database.
+
+=====================================================================

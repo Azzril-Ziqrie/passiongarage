@@ -1,0 +1,38 @@
+/* ===== Reset ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== Base ===== */
+body { }
+img { max-width: 100%; }
+a { }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+/* ===== Header ===== */
+#header { }
+.logo { }
+nav ul { list-style: none; }
+nav li { display: inline-block; }
+
+/* ===== Hero ===== */
+.hero { }
+
+/* ===== Sections ===== */
+section { }
+h1 { }
+h2 { }
+h3 { }
+
+/* ===== Grid & Card ===== */
+.grid { }
+.card { }
+
+/* ===== Button ===== */
+.btn { }
+
+/* ===== Form ===== */
+form { }
+input, textarea { }
+
+/* ===== Footer ===== */
+footer { }
