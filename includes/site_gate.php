@@ -3,23 +3,24 @@
  * Gate untuk semua halaman storefront: password → pilih tujuan (Storefront / Admin).
  * Dipanggil sebelum apa pun dirender; mengakhiri request sendiri jika belum selesai.
  */
-require_once __DIR__ . '/../config/env.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/site_lock.php';
 
-// Gate hanya aktif kalau SITE_LOCK=1 (di config/secrets.local.php komputer lokal).
-// Di hosting nilainya kosong → beranda langsung terbuka untuk publik.
-if (ddSecret('SITE_LOCK') !== '1') {
+// Aktif/nonaktif, password, dan teks diatur di admin → Site lock (admin/dashboard-site-lock.php).
+$siteLock = siteLockSettings($pdo);
+if (!$siteLock['enabled']) {
     return;
 }
 
-const SITE_LOCK_PASSWORD = 'passiongarage';
-const SITE_GATE_BG       = 'assets/images/hero/sd-hero-1.webp';
+const SITE_GATE_VIDEO  = 'assets/video/hero.mp4';
+const SITE_GATE_POSTER = 'assets/video/hero-poster.jpg';
 
 $lockError = false;
 
 if (($_POST['site_password'] ?? null) !== null) {
-    if (hash_equals(SITE_LOCK_PASSWORD, (string)$_POST['site_password'])) {
+    if (siteLockVerify($siteLock, (string)$_POST['site_password'])) {
         session_regenerate_id(true);
-        $_SESSION['site_unlocked'] = true;
+        $_SESSION['site_unlocked'] = siteLockStamp($siteLock);
         unset($_SESSION['site_entered']);
         header('Location: ' . $_SERVER['REQUEST_URI']);
         exit;
@@ -27,7 +28,8 @@ if (($_POST['site_password'] ?? null) !== null) {
     $lockError = true;
 }
 
-$unlocked = !empty($_SESSION['site_unlocked']);
+// Sesi lama tidak berlaku lagi setelah password diganti dari admin.
+$unlocked = ($_SESSION['site_unlocked'] ?? null) === siteLockStamp($siteLock);
 
 // Pilihan "Storefront": tandai sesi, lalu masuk ke beranda.
 if ($unlocked && ($_GET['enter'] ?? '') === 'store') {
@@ -51,7 +53,7 @@ header('Cache-Control: no-store');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>PassionGarage</title>
-  <link rel="preload" as="image" href="<?= SITE_GATE_BG ?>">
+  <link rel="preload" as="image" href="<?= SITE_GATE_POSTER ?>">
   <link rel="preload" href="assets/fonts/HelveticaNowText-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/fonts.css">
   <style>
@@ -73,11 +75,11 @@ header('Cache-Control: no-store');
       -webkit-font-smoothing: antialiased;
     }
 
-    /* hero banner as backdrop */
+    /* video sebagai backdrop; poster tampil selama video dimuat */
     .bg {
-      position: fixed; inset: -4%;
-      background: url('<?= SITE_GATE_BG ?>') center / cover no-repeat;
-      animation: drift 28s ease-in-out infinite alternate;
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      background: #111 url('<?= SITE_GATE_POSTER ?>') center / cover no-repeat;
       z-index: 0;
     }
     .veil {
@@ -86,7 +88,6 @@ header('Cache-Control: no-store');
         radial-gradient(120% 90% at 50% 100%, rgba(0,0,0,.55), transparent 60%),
         linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.38));
     }
-    @keyframes drift { from { transform: scale(1.02) translate3d(0,0,0); } to { transform: scale(1.09) translate3d(-1.2%, -1%, 0); } }
 
     .stage { position: relative; z-index: 2; width: min(760px, 100%); text-align: center; }
 
@@ -99,6 +100,15 @@ header('Cache-Control: no-store');
       font-size: clamp(2rem, 5.4vw, 3.25rem); line-height: 1.04;
       letter-spacing: -.028em; font-weight: 700;
     }
+    .logo { margin: 0 auto 20px; display: block; width: clamp(110px, 22vw, 160px); }
+    .logo img { display: block; width: 100%; height: auto; }
+    /* Intro: partikel putih mengumpul membentuk logo, lalu logo asli muncul dan tetap di tempat. */
+    .logo--intro { position: relative; animation: none !important; }
+    .logo--intro canvas { position: absolute; inset: -80px; width: calc(100% + 160px); height: calc(100% + 160px); pointer-events: none; transition: opacity .5s ease; }
+    .logo--intro img { opacity: 0; transition: opacity .45s ease; }
+    .logo--intro.is-formed canvas { opacity: 0; }
+    .logo--intro.is-formed img { opacity: 1; }
+    .logo--sm { width: 72px; height: auto; margin-bottom: 20px; }
     .lede { margin: 0 0 32px; font-size: 16px; opacity: .82; letter-spacing: -.005em; }
 
     /* materialise on enter */
@@ -106,6 +116,10 @@ header('Cache-Control: no-store');
     .stage > *:nth-child(2) { animation-delay: .04s; }
     .stage > *:nth-child(3) { animation-delay: .08s; }
     .stage > *:nth-child(4) { animation-delay: .14s; }
+    /* saat intro logo: teks & password menyusul setelah logo hampir terbentuk */
+    .stage--intro > *:nth-child(2) { animation-delay: 1.1s; }
+    .stage--intro > *:nth-child(3) { animation-delay: 1.2s; }
+    .stage--intro > *:nth-child(4) { animation-delay: 1.3s; }
     @keyframes arrive {
       from { opacity: 0; transform: translateY(14px) scale(.985); filter: blur(10px); }
       to   { opacity: 1; transform: none; filter: blur(0); }
@@ -178,7 +192,8 @@ header('Cache-Control: no-store');
       .choice { min-height: 132px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .bg, .stage > *, .shake { animation: none; }
+      .stage > *, .shake { animation: none; }
+      .logo--intro canvas { display: none; }
       .choice, .lock, .lock button, .choice__go { transition: none; }
     }
     @media (prefers-reduced-transparency: reduce) {
@@ -187,21 +202,25 @@ header('Cache-Control: no-store');
   </style>
 </head>
 <body>
-  <div class="bg" aria-hidden="true"></div>
+  <video class="bg" src="<?= SITE_GATE_VIDEO ?>" poster="<?= SITE_GATE_POSTER ?>" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+  <script>if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.currentScript.previousElementSibling.pause();</script>
   <div class="veil" aria-hidden="true"></div>
 
-  <main class="stage">
+  <main class="stage<?= !$unlocked && !$lockError ? ' stage--intro' : '' ?>">
 <?php if (!$unlocked): ?>
-    <div class="mark">PassionGarage</div>
-    <h1>PassionGarage</h1>
-    <p class="lede">Enter the password to continue.</p>
+    <?php $logoIntro = !$lockError; // intro hanya saat pertama dibuka, tidak diulang setelah salah password ?>
+    <h1 class="logo<?= $logoIntro ? ' logo--intro' : '' ?>" id="gateLogo">
+      <?php if ($logoIntro): ?><canvas aria-hidden="true"></canvas><?php endif; ?>
+      <img src="assets/images/passiongarage-logo-white.png" alt="PassionGarage" width="359" height="404">
+    </h1>
+    <?php if ($siteLock['message'] !== ''): ?><p class="lede"><?= htmlspecialchars($siteLock['message'], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
     <form method="post" autocomplete="off" class="lock<?= $lockError ? ' shake' : '' ?>">
       <input type="password" name="site_password" placeholder="Password" autofocus required aria-label="Password">
       <button type="submit">Enter</button>
     </form>
     <?php if ($lockError): ?><div class="err" role="alert">Wrong password. Try again.</div><?php endif; ?>
 <?php else: ?>
-    <div class="mark">PassionGarage</div>
+    <img class="logo logo--sm" src="assets/images/passiongarage-logo-white.png" alt="PassionGarage" width="359" height="404">
     <h1>Where to?</h1>
     <p class="lede">Choose where you want to go.</p>
     <div class="choices">
@@ -220,6 +239,61 @@ header('Cache-Control: no-store');
     </div>
 <?php endif; ?>
   </main>
+<?php if (!$unlocked && !$lockError): ?>
+  <script>
+  (function () {
+    'use strict';
+    var box = document.getElementById('gateLogo');
+    if (!box || !box.classList.contains('logo--intro')) return;
+    var canvas = box.querySelector('canvas'), logo = box.querySelector('img');
+    var DURATION = 1050, STAGGER = 380, GAP = 2.4, DOT = 1.6, SCATTER = 70, PAD = 80;
+    function formed() { box.classList.add('is-formed'); }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { formed(); return; }
+    function ease(t) { return 1 - Math.pow(1 - t, 4); }
+
+    function run() {
+      var w = logo.clientWidth, h = logo.clientHeight, particles = [];
+      try {
+        var off = document.createElement('canvas');
+        off.width = Math.round(w); off.height = Math.round(h);
+        var octx = off.getContext('2d');
+        octx.drawImage(logo, 0, 0, off.width, off.height);
+        var data = octx.getImageData(0, 0, off.width, off.height).data;
+        for (var y = 0; y < off.height; y += GAP) {
+          for (var x = 0; x < off.width; x += GAP) {
+            if (data[(Math.floor(y) * off.width + Math.floor(x)) * 4 + 3] > 128) {
+              var a = Math.random() * Math.PI * 2, d = SCATTER * (0.25 + 0.75 * Math.random());
+              particles.push({ x1: x, y1: y, x0: x + Math.cos(a) * d, y0: y + Math.sin(a) * d, delay: Math.random() * STAGGER });
+            }
+          }
+        }
+      } catch (e) { formed(); return; }
+
+      var dpr = Math.min(window.devicePixelRatio || 1, 2), ctx = canvas.getContext('2d');
+      canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#fff';
+      var start = performance.now(), total = DURATION + STAGGER;
+      (function tick(now) {
+        var elapsed = now - start;
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i], t = Math.min(1, Math.max(0, (elapsed - p.delay) / DURATION)), e = ease(t);
+          var size = DOT * (1 + (1 - e) * 0.9);
+          ctx.globalAlpha = Math.min(1, t * 1.6);
+          ctx.fillRect(PAD + p.x0 + (p.x1 - p.x0) * e - size / 2, PAD + p.y0 + (p.y1 - p.y0) * e - size / 2, size, size);
+        }
+        ctx.globalAlpha = 1;
+        if (elapsed < total) requestAnimationFrame(tick); else formed();
+      })(start);
+    }
+
+    if (logo.complete && logo.naturalWidth) run();
+    else { logo.addEventListener('load', run, { once: true }); logo.addEventListener('error', formed, { once: true }); }
+    setTimeout(formed, 6000); // jaring pengaman: logo pasti tampil
+  })();
+  </script>
+<?php endif; ?>
 </body>
 </html>
 <?php

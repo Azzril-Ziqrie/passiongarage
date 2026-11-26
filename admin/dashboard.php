@@ -141,6 +141,7 @@ $navGroups = [
     'Storefront content' => [
         ['dashboard-hero.php', 'i-image', 'Hero banner', null],
         ['dashboard-announcement.php', 'i-tag', 'Announcement bar', null],
+        ['dashboard-site-lock.php', 'i-key', 'Site lock', null],
         ['dashboard-home-media.php', 'i-grid', 'Homepage media', null],
         ['lookbook.php', 'i-book', 'Lookbook', null],
         ['dashboard-blogs.php', 'i-doc', 'Research / Blog', null],

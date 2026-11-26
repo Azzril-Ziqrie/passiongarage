@@ -67,9 +67,11 @@ $orderUploaded   = trim((string)($_GET['order'] ?? ''));
 
 /* ── data ────────────────────────────────────────────── */
 $schema     = catalogSchema($pdo);
-// Banner hero = satu video (assets/video/hero.mp4). Poster dipakai juga untuk og:image.
-const HERO_VIDEO  = 'assets/video/hero.mp4';
-const HERO_POSTER = 'assets/video/hero-poster.jpg';
+// Banner hero = slideshow gambar (assets/images/hero/banner-N.jpg + versi -960 untuk layar kecil).
+// Gambar pertama dipakai juga untuk og:image. Video lama (assets/video/hero.mp4) kini jadi latar site lock.
+const HERO_SLIDES   = 5;
+const HERO_INTERVAL = 5000; // ms per gambar
+const HERO_POSTER   = 'assets/images/hero/banner-1.jpg';
 $categories = fetchCategories($pdo, $schema);
 $products   = fetchInStockProducts($pdo, $schema, $search, $category);
 $gate       = currencyGateModel();
@@ -134,7 +136,28 @@ siteBodyOpen([
 ?>
   <main class="home-main">
     <section class="hero" aria-label="Featured">
-      <video src="<?= HERO_VIDEO ?>" poster="<?= HERO_POSTER ?>" autoplay muted loop playsinline preload="auto" aria-label="<?= esc(BRAND_NAME) ?>"></video>
+      <div class="hero-slides">
+        <?php for ($i = 1; $i <= HERO_SLIDES; $i++): ?>
+        <img class="hero-slide<?= $i === 1 ? ' is-active' : '' ?>"
+             src="assets/images/hero/banner-<?= $i ?>.jpg"
+             srcset="assets/images/hero/banner-<?= $i ?>-960.jpg 960w, assets/images/hero/banner-<?= $i ?>.jpg 1920w"
+             sizes="100vw" width="1920" height="1080"
+             alt="<?= $i === 1 ? esc(BRAND_NAME) : '' ?>"
+             <?= $i === 1 ? 'fetchpriority="high"' : 'loading="lazy"' ?> decoding="async">
+        <?php endfor; ?>
+      </div>
+      <script>
+      (function () {
+        var slides = document.currentScript.previousElementSibling.children, cur = 0;
+        if (slides.length < 2) return;
+        setInterval(function () {
+          if (document.hidden) return;
+          slides[cur].classList.remove('is-active');
+          cur = (cur + 1) % slides.length;
+          slides[cur].classList.add('is-active');
+        }, <?= HERO_INTERVAL ?>);
+      })();
+      </script>
       <?php if (!$isFiltered): ?>
       <a href="shop.php" class="hero-cta link-u">Shop now</a>
       <?php endif; ?>
