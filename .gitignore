@@ -1,4 +1,6 @@
-# Override lokal (XAMPP). config/secrets.php SENGAJA di-commit — repo ini private.
+# Rahasia: config/secrets.php (produksi) di-upload manual ke Hostinger lewat File Manager,
+# config/secrets.local.php untuk XAMPP. Dua-duanya JANGAN di-commit.
+config/secrets.php
 config/secrets.local.php
 
 # Log & berkas yang dibuat server
