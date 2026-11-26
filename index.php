@@ -101,14 +101,16 @@ siteHeadOpen([
   <script type="application/ld+json"><?= json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script>
 <?php
 siteBodyOpen([
-    'bodyClass'    => 'home',
+    'bodyClass'    => 'home' . ($announce ? ' has-announce' : ''),
     'overlay'      => false,
     'searchAction' => 'index.php',
     'categoryBase' => 'index.php',
     'search'       => $search,
     'category'     => $category,
     'currencyGate' => $gate,
-    'beforeNavbar' => function () use ($paymentUploaded, $orderUploaded) {
+    'loader'       => !$isFiltered, // loading screen logo hanya di beranda, bukan saat filter kategori/pencarian
+    'beforeNavbar' => function () use ($paymentUploaded, $orderUploaded, $announce) {
+        if ($announce) { echo renderAnnouncement($announce); }
         if (!$paymentUploaded) { return; }
         ?>
   <div id="paymentPopup" class="modal modal--open" role="dialog" aria-modal="true" aria-labelledby="paymentPopupTitle">
@@ -137,8 +139,6 @@ siteBodyOpen([
       <a href="shop.php" class="hero-cta link-u">Shop now</a>
       <?php endif; ?>
     </section>
-
-    <?php if ($announce) { echo renderAnnouncement($announce); } ?>
 
     <?php if ($journal) { include __DIR__ . '/includes/partials/home_journal.php'; } ?>
 

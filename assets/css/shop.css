@@ -108,7 +108,8 @@
 .page-shop .product-name{font-size:13px;font-weight:400;letter-spacing:.02em;line-height:1.35;-webkit-line-clamp:2}
 .page-shop .product-price{font-size:13px;letter-spacing:.02em}
 .page-shop .product-badges{top:10px;left:10px}
-.page-shop .product-badge{font-size:9.5px;padding:3px 7px}
+.page-shop .product-badge{font-size:9.5px}
+.page-shop .product-badge--sale{padding:3px 7px}
 
 @media (max-width:700px){
   .shop-bar{padding-top:12px;padding-bottom:12px}

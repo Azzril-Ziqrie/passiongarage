@@ -161,7 +161,8 @@ function siteHeadOpen(array $o = []): void
  * toast, panel menu & keranjang, modal akun, navbar.
  *
  * Opsi: bodyClass, overlay(bool: navbar transparan di atas hero), searchAction, categoryBase,
- *       search, category, currencyGate(array dari currencyGateModel()), beforeNavbar(callable)
+ *       search, category, currencyGate(array dari currencyGateModel()), beforeNavbar(callable),
+ *       loader(bool: tampilkan loading screen logo — hanya beranda)
  */
 function siteBodyOpen(array $o = []): void
 {
@@ -185,7 +186,7 @@ function siteBodyOpen(array $o = []): void
     ?>
 </head>
 <body class="<?= esc($o['bodyClass'] ?? '') ?>">
-  <?php if (is_file(dirname(__DIR__) . '/loader.php')) include_once dirname(__DIR__) . '/loader.php'; ?>
+  <?php if (!empty($o['loader'])) include_once dirname(__DIR__) . '/loader.php'; ?>
 
   <?php if (!empty($o['currencyGate'])) { $gate = $o['currencyGate']; include __DIR__ . '/partials/currency_gate.php'; } ?>
 

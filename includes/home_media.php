@@ -13,6 +13,8 @@ const HOME_MEDIA_PLACEMENTS = [
 /** Foto penempatan 'journal' selalu landscape 16:9; admin memotong tengah saat upload. */
 const HOME_JOURNAL_PLACEMENT = 'journal';
 const HOME_JOURNAL_ASPECT    = 16 / 9;
+/** Sementara: banner Journal tampil gambar saja. Set true untuk memunculkan lagi teks dari dashboard. */
+const HOME_JOURNAL_SHOW_TEXT = false;
 
 /** Teks brand di atas video pertama di homepage (item bisa menimpanya dengan caption sendiri). */
 const HOME_VIDEO_CAPTION = [

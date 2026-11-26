@@ -257,16 +257,9 @@ siteHeadOpen([
 .pdp-buy .btn:active:not(:disabled){transform:scale(.99)}
 .pdp-buy .btn:disabled{background:var(--pdp-tile);border-color:var(--pdp-tile);color:var(--mute)}
 
-/* informasi: satu disclosure */
-.pdp-more{margin-top:28px}
-.pdp-more summary{
-  list-style:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;
-  font-size:12px;letter-spacing:.05em;cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-.pdp-more summary::-webkit-details-marker{display:none}
-.pdp-more summary::before{content:'';width:0;height:0;border-left:6px solid currentColor;border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .3s var(--pdp-spring)}
-.pdp-more[open] summary::before{transform:rotate(90deg)}
-.pdp-more summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+/* informasi: selalu terbuka, tanpa dropdown */
+.pdp-more{margin-top:36px}
+.pdp-more__title{margin:0 0 4px;font-size:12px;font-weight:400;letter-spacing:.05em}
 .pdp-body{padding:8px 0 4px;font-size:12px;line-height:1.75;color:var(--ink-2)}
 .pdp-body p+p{margin-top:14px}
 .pdp-body strong{color:var(--ink);font-weight:500}
@@ -312,7 +305,7 @@ siteHeadOpen([
   .pdp-related .product-info{padding:12px 14px 6px}
 }
 @media(min-width:901px){.pdp-wrap{display:contents}}
-@media(prefers-reduced-motion:reduce){.pdp-modal,.size-btn,.color-btn,.color-btn::after,.pdp-buy .btn,.pdp-more summary::before,.pdp-progress span{transition:none}}
+@media(prefers-reduced-motion:reduce){.pdp-modal,.size-btn,.color-btn,.color-btn::after,.pdp-buy .btn,.pdp-progress span{transition:none}}
 @media(prefers-reduced-transparency:reduce){.pdp-modal{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(0,0,0,.45)}.pdp-chart{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}.pdp-fs{background:#fff}}
 </style>
 <?php
@@ -405,8 +398,8 @@ siteBodyOpen(['bodyClass' => 'page-product', 'searchAction' => 'shop.php']);
         </button>
       </div>
 
-      <details class="pdp-more">
-        <summary>Information</summary>
+      <section class="pdp-more" aria-labelledby="pdpInfoTitle">
+        <h2 class="pdp-more__title" id="pdpInfoTitle">Information</h2>
         <div class="pdp-body">
           <?php if (!empty($product['composition'])): ?><p><strong>Materials</strong><br><?= esc($product['composition']) ?></p><?php endif; ?>
           <?php if (!empty($product['care'])): ?><p><strong>Care</strong><br><?= esc($product['care']) ?></p><?php endif; ?>
@@ -415,7 +408,7 @@ siteBodyOpen(['bodyClass' => 'page-product', 'searchAction' => 'shop.php']);
           <?php endif; ?>
           <p><strong>Shipping &amp; returns</strong><br>Shipping is calculated at checkout. Orders are prepared within 1–2 working days after payment confirmation. All sales are final, unless the item received is defective or incorrect. <a href="shipping.php">Read full policy</a></p>
         </div>
-      </details>
+      </section>
     </div>
   </div>
 

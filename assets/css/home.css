@@ -60,6 +60,7 @@ body.cg-lock{overflow:hidden}
    Desktop memakai grid 8 kolom (--home-cols) supaya kolom Journal, info toko, tile, dan footer sejajar;
    mobile menumpuk ke satu kolom dengan baris yang bisa digeser. */
 body.home{
+  --announce-h:0px;     /* tinggi bar pengumuman; diisi oleh .has-announce */
   --home-gap:10px;
   --home-text:12px;      /* teks kecil gaya editorial; dinaikkan di mobile */
   --home-label-track:.04em;
@@ -67,7 +68,7 @@ body.home{
 @media(max-width:700px){body.home{--home-text:13px}}
 @media(min-width:900px){body.home{--home-gap:12px}}
 
-.home-main{padding-top:var(--nav-h)}
+.home-main{padding-top:calc(var(--nav-h) + var(--announce-h))}
 
 /* ── navbar: Menu (tiga garis) di ujung kiri, logo di tengah, Search/Cart di kanan ── */
 body.home .navbar{border-bottom:1px solid var(--line)}
@@ -87,7 +88,7 @@ body.home .brand-mark img{height:34px}
 /* ── hero: video selebar layar; desktop memenuhi sisa tinggi layar di bawah navbar ── */
 .hero{position:relative;height:72svh;min-height:420px;background:#111;overflow:hidden}
 .hero video{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
-@media(min-width:900px){.hero{height:calc(100svh - var(--nav-h));min-height:520px}}
+@media(min-width:900px){.hero{height:calc(100svh - var(--nav-h) - var(--announce-h));min-height:520px}}
 
 /* "Shop now": di atas video, pojok kanan bawah. Gradasi tipis di dasar video + bayangan halus menjaga teks putih
    tetap terbaca di atas frame terang (vibrancy: sedikit lebih tebal, tracking sedikit lebih lebar). */
@@ -108,18 +109,22 @@ body.home .brand-mark img{height:34px}
 .journal-strip.is-dragging,.tiles.is-dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}
 .journal-card{flex:0 0 clamp(280px,30vw,520px);display:flex;flex-direction:column;gap:2px;scroll-snap-align:start;font-size:var(--home-text);letter-spacing:.01em;transition:opacity .2s ease}
 .journal-card:active{opacity:.7}
-.journal-card img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:12px;border-radius:var(--r-sm);background:var(--tile);-webkit-user-drag:none}
+.journal-card img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:12px;background:var(--tile);-webkit-user-drag:none}
+.journal-card img:last-child{margin-bottom:0}
 .journal-card__title{text-transform:uppercase;letter-spacing:var(--home-label-track)}
 .journal-card__sub{color:var(--ink-2)}
 .journal-card__more{align-self:flex-start;margin-top:2px}
 @media(max-width:700px){.journal-card{flex-basis:min(82vw,460px)}}
+
+/* ── kategori: beri napas dari banner/journal di atasnya (sebelumnya hanya 14px) ── */
+body.home .category-bar{padding-top:clamp(40px,6vw,80px)}
 
 /* ── tile kategori: rata kiri di margin halaman, selebar satu kolom grid; kalau banyak, digeser ke kanan ── */
 .tiles{display:flex;gap:var(--home-gap);overflow-x:auto;padding:0 var(--gutter) clamp(56px,8vw,112px);scroll-snap-type:x proximity;scroll-padding-inline:var(--gutter);scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .tiles::-webkit-scrollbar{display:none}
 .tile{flex:0 0 min(42vw,320px);display:flex;flex-direction:column;gap:10px;scroll-snap-align:start;font-size:var(--home-text);letter-spacing:.01em;transition:opacity .2s ease}
 .tile:active{opacity:.7}
-.tile img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-sm);background:var(--tile);-webkit-user-drag:none}
+.tile img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--tile);-webkit-user-drag:none}
 @media(min-width:900px){
   .tiles{padding-bottom:clamp(72px,8vw,128px)}
   .tile{flex:0 0 calc((100% - 2 * var(--gutter) - 7 * var(--home-gap)) / 8)}
@@ -164,7 +169,7 @@ body.home .footer-copy{font-size:inherit;line-height:inherit}
 .media-item{margin:0}
 .media-link{display:block}
 .media-item img{display:block;width:100%;height:auto;background:var(--tile)}
-.media-strip .media-item,.media-strip .media-item img{border-radius:var(--r-md);overflow:hidden}
+.media-strip .media-item{overflow:hidden}
 .media-strip{display:flex;gap:12px;overflow-x:auto;padding:0 var(--gutter);scroll-snap-type:x proximity;scroll-padding-inline:var(--gutter);scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .media-strip::-webkit-scrollbar{display:none}
 .media-strip > *{flex:0 0 auto;scroll-snap-align:start}
@@ -197,8 +202,10 @@ body.home .footer-copy{font-size:inherit;line-height:inherit}
 
 /* ── reduced motion ──────────────────────────────────────── */
 
-/* ── announcement bar (di bawah hero, atas teks intro; diatur dari admin) ── */
-.announce{position:relative;overflow:hidden;height:38px;border-block:1px solid var(--line-strong);color:var(--ink);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+/* ── announcement bar (paling atas, di atas navbar; diatur dari admin) ── */
+body.home.has-announce{--announce-h:38px}
+body.home.has-announce .navbar{top:var(--announce-h)}
+.announce{position:fixed;top:0;left:0;right:0;z-index:61;overflow:hidden;height:var(--announce-h);background:var(--bg);border-bottom:1px solid var(--line-strong);color:var(--ink);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
 .announce__msg{display:inline-block;padding:0 28px;white-space:nowrap;color:inherit}
 a.announce__msg:hover{text-decoration:underline;text-underline-offset:3px}
 .announce__sep{opacity:.4}
@@ -210,11 +217,22 @@ a.announce__msg:hover{text-decoration:underline;text-underline-offset:3px}
 .announce__slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .5s ease,transform .5s var(--ease)}
 .announce__slide.is-active{opacity:1;pointer-events:auto}
 .announce__slide.no-t{transition:none}
+.announce__slide .announce__msg{overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .announce--slide .announce__slide{transform:translateY(100%)}
 .announce--slide .announce__slide.is-active{transform:none}
 .announce--slide .announce__slide.is-out{transform:translateY(-100%)}
-.announce__slide .announce__msg{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* drift: masuk dari kiri sambil fade-in, diam selama --announce-speed, lalu keluar ke kanan.
+   Arah masuk & keluar searah, jadi pesan terasa terus mengalir ke kanan. */
+.announce--drift{--drift:28px}
+.announce--drift .announce__slide{transform:translateX(calc(var(--drift) * -1));transition:opacity .6s ease,transform .9s var(--ease)}
+.announce--drift .announce__slide.is-active{transform:none}
+.announce--drift .announce__slide.is-out{transform:translateX(var(--drift));transition-duration:.4s,.6s}
+.announce--drift .announce__slide.is-intro{animation:announce-drift-in .9s var(--ease) .2s both}
+@keyframes announce-drift-in{from{opacity:0;transform:translateX(calc(var(--drift) * -1))}}
 @media(prefers-reduced-motion:reduce){
   .announce--marquee .announce__group{animation:none}
+  .announce--marquee .announce__group[aria-hidden]{display:none}
+  .announce__slide,.announce--slide .announce__slide,.announce--drift .announce__slide{transform:none!important;animation:none!important}
+}
   .announce--marquee .announce__group[aria-hidden]{display:none}
 }

@@ -28,6 +28,7 @@
   --press:scale(.97);
   --focus-ring:0 0 0 4px rgba(17,17,17,.1);
   --menu-bg:rgba(255,255,255,.6);   /* panel menu layar penuh: tembus pandang + blur */
+  --menu-text:12px;                  /* sama dengan teks halaman depan (--home-text) */
 }
 @media(max-width:600px){:root{--gutter:20px}}
 
@@ -118,28 +119,35 @@ button{cursor:pointer;background:none;border:none}
 .menu-close::before,.menu-close::after{content:'';position:absolute;left:50%;top:50%;width:22px;height:1px;background:currentColor;transform:translate(-50%,-50%) rotate(45deg)}
 .menu-close::after{transform:translate(-50%,-50%) rotate(-45deg)}
 .menu-close:active{transform:scale(.94)}
-.menu-body{flex:1;min-height:0;overflow-y:auto;padding:clamp(24px,6vh,64px) var(--gutter) 40px;display:flex;flex-direction:column;gap:clamp(28px,5vh,48px)}
+.menu-body{flex:1;min-height:0;overflow-y:auto;padding:clamp(20px,4vh,40px) var(--gutter) 40px;display:flex;flex-direction:column;gap:28px;font-size:var(--menu-text);letter-spacing:.01em}
 /* isi menu muncul bergantian setelah panel mulai bergeser */
 .menu-body>*{opacity:0;transform:translateX(-16px);transition:opacity .4s ease,transform .5s var(--ease)}
 .menu-panel.active .menu-body>*{opacity:1;transform:none}
 .menu-panel.active .menu-body>:nth-child(1){transition-delay:.12s}
 .menu-panel.active .menu-body>:nth-child(2){transition-delay:.18s}
 .menu-search{display:flex;border-bottom:1px solid var(--ink);padding-bottom:10px}
-.menu-search input{flex:1;border:none;outline:none;background:transparent;font-size:clamp(18px,2.5vw,24px);letter-spacing:-.02em}
+.menu-search input{flex:1;border:none;outline:none;background:transparent;font-size:inherit;letter-spacing:inherit}
 .menu-search input::placeholder{color:var(--mute)}
-.menu-search button{font-size:18px;padding-left:10px}
-.menu-nav{display:flex;flex-direction:column;gap:clamp(14px,2.4vh,24px)}
-.menu-nav a,.dropdown-toggle{font-size:clamp(24px,4.2vw,46px);font-weight:400;letter-spacing:-.025em;line-height:1.05;transition:opacity .15s}
+.menu-search button{font-size:inherit;padding-left:10px}
+.menu-nav{display:flex;flex-direction:column}
+.menu-nav a,.dropdown-toggle,#openAccountBtnMobile{display:flex;align-items:center;min-height:32px;font-size:inherit;font-weight:400;letter-spacing:inherit;line-height:1.4;text-align:left;transition:opacity .15s}
 @media(hover:hover){.menu-nav a:hover,.dropdown-toggle:hover{opacity:.5}}
 .menu-nav a:active,.dropdown-toggle:active{opacity:.5}
-.dropdown-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left}
-.dropdown-toggle::after{content:'+';font-size:20px;font-weight:300;transition:transform .3s var(--ease)}
+.dropdown-toggle{justify-content:space-between;width:100%}
+.dropdown-toggle::after{content:'+';font-size:inherit;font-weight:300;transition:transform .3s var(--ease)}
 .dropdown.open .dropdown-toggle::after{transform:rotate(45deg)}
-.dropdown-menu{display:none;flex-direction:column;gap:12px;padding:16px 0 4px 2px}
+.dropdown-menu{display:none;flex-direction:column;padding:0 0 8px 12px}
 .dropdown.open .dropdown-menu{display:flex}
-.dropdown-menu a{font-size:clamp(18px,2.5vw,26px);font-weight:400;letter-spacing:-.02em;color:var(--ink-2)}
-#openAccountBtnMobile{display:none;font-size:clamp(24px,4.2vw,46px);font-weight:400;letter-spacing:-.025em;line-height:1.05;text-align:left}
-@media(max-width:600px){#openAccountBtnMobile{display:block}}
+.dropdown-menu a{color:var(--ink-2)}
+#openAccountBtnMobile{display:none}
+@media(max-width:600px){#openAccountBtnMobile{display:flex}}
+/* mobile: teks naik 1px seperti halaman depan; target sentuh tetap 44px */
+@media(max-width:700px){
+  .menu-panel{--menu-text:13px}
+  .menu-nav a,.dropdown-toggle,#openAccountBtnMobile{min-height:44px}
+}
+/* iOS memperbesar layar bila input < 16px saat difokus */
+@media(pointer:coarse){.menu-search input{font-size:16px}}
 
 .cart-panel{right:0;width:400px;max-width:100%;border-radius:var(--r-lg) 0 0 var(--r-lg);transform:translateX(100%);touch-action:pan-y}
 .cart-panel.active{transform:none}
@@ -243,27 +251,28 @@ button{cursor:pointer;background:none;border:none}
 .shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:20px 0 16px}
 .shelf-title{font-weight:500;white-space:nowrap}
 .category-bar{padding:14px var(--gutter)}
-.category-nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+/* rata kiri: jarak antar kategori lewat gap (bukan padding), jadi teks pertama sejajar tepi konten (--gutter) */
+.category-nav{display:flex;justify-content:flex-start;gap:24px;overflow-x:auto;scrollbar-width:none}
 .category-nav::-webkit-scrollbar{display:none}
-.category-nav a{padding:6px 12px;border-radius:999px;color:var(--mute);white-space:nowrap;transition:color .2s,background-color .2s,transform .12s ease-out}
-.category-nav a:hover{color:var(--ink);background:var(--tile)}
-.category-nav a:active{transform:scale(.96)}
-.category-nav a.active{color:var(--bg);background:var(--ink)}
+/* kategori: teks saja; yang terpilih cukup ditandai warna tinta penuh, tanpa pil/latar */
+.category-nav a{padding:6px 0;color:var(--mute);white-space:nowrap;transition:color .2s,opacity .15s}
+.category-nav a:hover,.category-nav a.active{color:var(--ink)}
+.category-nav a:active{opacity:.5}
 @media(max-width:600px){
   .shelf-head{flex-direction:column;align-items:stretch;gap:12px}
-  /* Chip kategori: hanya barisnya yang bergeser (bukan seluruh halaman). Tepi ke tepi layar, magnet ke chip,
+  /* Baris kategori: hanya barisnya yang bergeser (bukan seluruh halaman). Tepi ke tepi layar, magnet ke chip,
      momentum iOS, dan tidak "bocor" ke gesture halaman. */
-  .category-nav{min-width:0;margin:0 calc(var(--gutter) * -1);padding:0 var(--gutter);scroll-padding-inline:var(--gutter);
+  .category-nav{gap:20px;min-width:0;margin:0 calc(var(--gutter) * -1);padding:0 var(--gutter);scroll-padding-inline:var(--gutter);
     scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--gutter),#000 calc(100% - var(--gutter)),transparent);
     mask-image:linear-gradient(90deg,transparent,#000 var(--gutter),#000 calc(100% - var(--gutter)),transparent)}
-  .category-nav a{flex:0 0 auto;scroll-snap-align:start;padding:10px 14px}
+  .category-nav a{flex:0 0 auto;scroll-snap-align:start;padding:12px 0}
 }
 
 .product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:44px 14px}
 .product-card{display:block;-webkit-tap-highlight-color:transparent}
 /* Tile: foto memenuhi bingkai; latar transparan, jadi menyatu dengan putih halaman (multiply). */
-.product-tile{position:relative;aspect-ratio:4/5;background:transparent;overflow:hidden;border-radius:var(--r-sm)}
+.product-tile{position:relative;aspect-ratio:4/5;background:transparent;overflow:hidden}
 .product-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;transition:transform .7s var(--ease),opacity .4s ease}
 .product-tile .alt{opacity:0}
 /* Hover: foto pertama memudar keluar tepat saat foto kedua memudar masuk (jumlah opacity tetap 1).
@@ -274,9 +283,10 @@ button{cursor:pointer;background:none;border:none}
   .product-card:hover .product-tile .alt{opacity:1}
   .product-card.is-sold-out:hover .product-tile .alt{opacity:.55}
 }
-.product-badges{position:absolute;top:10px;left:10px;z-index:2;display:flex;gap:6px}
-.product-badge{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.02em;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px) saturate(180%);backdrop-filter:blur(10px) saturate(180%)}
-.product-badge--sale{background:var(--ink);color:#fff}
+.product-badges{position:absolute;top:10px;left:10px;z-index:2;display:flex;align-items:center;gap:8px}
+/* label "New" / "Sold out": teks saja, tanpa pil/latar */
+.product-badge{font-size:10px;font-weight:600;letter-spacing:.02em;line-height:1.4}
+.product-badge--sale{padding:3px 8px;border-radius:999px;background:var(--ink);color:#fff}
 .product-card.is-sold-out .product-tile img:not(.alt){opacity:.55}
 .product-card.is-sold-out .product-name,.product-card.is-sold-out .product-price .now{color:var(--mute)}
 .product-info{padding-top:12px;display:grid;gap:2px}

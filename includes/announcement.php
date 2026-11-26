@@ -1,6 +1,6 @@
 <?php
 /**
- * Announcement bar hitam di paling atas storefront. Diatur dari admin (admin/dashboard-announcement.php),
+ * Announcement bar di paling atas halaman depan (di atas navbar). Diatur dari admin (admin/dashboard-announcement.php),
  * disimpan sebagai satu baris JSON di admin_settings (key "announcement").
  */
 
@@ -10,6 +10,7 @@ const ANNOUNCEMENT_ANIMATIONS = [
     'marquee' => 'Scrolling ticker',
     'slide'   => 'Slide up, one message at a time',
     'fade'    => 'Fade, one message at a time',
+    'drift'   => 'Fade + drift right, then hold still',
     'static'  => 'No animation',
 ];
 
@@ -85,53 +86,87 @@ function announcementForDisplay(PDO $pdo): ?array
     return $settings['enabled'] && $settings['messages'] ? $settings : null;
 }
 
+/** Animasi yang menampilkan satu pesan sekaligus dan berganti tiap $speed detik. */
+const ANNOUNCEMENT_ROTATING = ['slide', 'fade', 'drift'];
+
 /** HTML bar. $a berasal dari announcementForDisplay(). */
 function renderAnnouncement(array $a): string
 {
-    $esc  = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
-    $link = $a['link'];
-    $item = static function (string $text) use ($esc, $link): string {
-        return $link !== ''
-            ? '<a class="announce__msg" href="' . $esc($link) . '">' . $esc($text) . '</a>'
-            : '<span class="announce__msg">' . $esc($text) . '</span>';
-    };
     $animation = $a['animation'];
     $speed     = (int)$a['speed'];
-    $out       = '<div class="announce announce--' . $esc($animation) . '" role="region" aria-label="Announcement" style="--announce-speed:' . $speed . 's">';
+    $body      = $animation === 'marquee'
+        ? announcementTrackHtml($a['messages'], $a['link'])
+        : announcementStageHtml($a['messages'], $a['link'], $animation === 'drift');
 
-    if ($animation === 'marquee') {
-        // Dua grup identik; keduanya bergeser selebar dirinya sendiri → putaran mulus tanpa JS.
-        $group = '';
-        foreach ($a['messages'] as $m) {
-            $group .= $item($m) . '<span class="announce__sep" aria-hidden="true">/</span>';
-        }
-        $out .= '<div class="announce__track"><div class="announce__group">' . $group . '</div>'
-              . '<div class="announce__group" aria-hidden="true">' . $group . '</div></div>';
-    } else {
-        $out .= '<div class="announce__stage">';
-        foreach ($a['messages'] as $i => $m) {
-            $out .= '<div class="announce__slide' . ($i === 0 ? ' is-active' : '') . '">' . $item($m) . '</div>';
-        }
-        $out .= '</div>';
-        if (in_array($animation, ['slide', 'fade'], true) && count($a['messages']) > 1) {
-            $ms   = $speed * 1000;
-            $out .= <<<HTML
+    $rotates = in_array($animation, ANNOUNCEMENT_ROTATING, true) && count($a['messages']) > 1;
+
+    return '<div class="announce announce--' . announcementEsc($animation) . '" role="region" aria-label="Announcement"'
+         . ' style="--announce-speed:' . $speed . 's">'
+         . $body
+         . ($rotates ? announcementRotatorScript($speed * 1000) : '')
+         . "</div>\n";
+}
+
+function announcementEsc($value): string
+{
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+function announcementMessageHtml(string $text, string $link): string
+{
+    return $link !== ''
+        ? '<a class="announce__msg" href="' . announcementEsc($link) . '">' . announcementEsc($text) . '</a>'
+        : '<span class="announce__msg">' . announcementEsc($text) . '</span>';
+}
+
+/** Ticker: dua grup identik bergeser selebar dirinya sendiri → putaran mulus tanpa JS. */
+function announcementTrackHtml(array $messages, string $link): string
+{
+    $group = '';
+    foreach ($messages as $m) {
+        $group .= announcementMessageHtml($m, $link) . '<span class="announce__sep" aria-hidden="true">/</span>';
+    }
+    return '<div class="announce__track"><div class="announce__group">' . $group . '</div>'
+         . '<div class="announce__group" aria-hidden="true">' . $group . '</div></div>';
+}
+
+/** Satu pesan per slide; pesan pertama langsung tampil (is-intro = animasi masuk saat halaman dibuka). */
+function announcementStageHtml(array $messages, string $link, bool $withIntro): string
+{
+    $out = '<div class="announce__stage">';
+    foreach ($messages as $i => $m) {
+        $state = $i === 0 ? ' is-active' . ($withIntro ? ' is-intro' : '') : '';
+        $out  .= '<div class="announce__slide' . $state . '">' . announcementMessageHtml($m, $link) . '</div>';
+    }
+    return $out . '</div>';
+}
+
+/**
+ * Ganti pesan tiap $intervalMs. Slide berikutnya di-reset ke posisi awal tanpa transisi,
+ * lalu masuk; slide lama keluar ke arah sebaliknya. Berhenti sementara saat di-hover/fokus.
+ * Reduced motion tetap berganti — CSS mematikan geraknya sehingga tinggal cross-fade.
+ */
+function announcementRotatorScript(int $intervalMs): string
+{
+    return <<<HTML
 <script>
 (function () {
   var bar = document.currentScript.parentNode;
-  var slides = bar.querySelectorAll('.announce__slide'), cur = 0;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var slides = bar.querySelectorAll('.announce__slide'), cur = 0, paused = false;
+  function hold(v) { return function () { paused = v; }; }
+  bar.addEventListener('pointerenter', hold(true));
+  bar.addEventListener('pointerleave', hold(false));
+  bar.addEventListener('focusin', hold(true));
+  bar.addEventListener('focusout', hold(false));
   setInterval(function () {
-    var next = slides[(cur + 1) % slides.length];
+    if (paused || document.hidden) return;
+    var prev = slides[cur], next = slides[(cur + 1) % slides.length];
     next.classList.add('no-t'); next.classList.remove('is-out'); void next.offsetWidth; next.classList.remove('no-t');
-    slides[cur].classList.remove('is-active'); slides[cur].classList.add('is-out');
+    prev.classList.remove('is-active', 'is-intro'); prev.classList.add('is-out');
     next.classList.add('is-active');
     cur = (cur + 1) % slides.length;
-  }, $ms);
+  }, $intervalMs);
 })();
 </script>
 HTML;
-        }
-    }
-    return $out . "</div>\n";
 }

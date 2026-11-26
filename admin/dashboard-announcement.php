@@ -194,7 +194,7 @@ $csrf = ddAdminCsrf();
         <div class="eyebrow"><?= h(BRAND_NAME) ?> Admin</div>
         <h1 class="headline">Announcement Bar</h1>
         <p class="subcopy">
-          A black bar on the homepage, right below the hero banner and above the intro text.
+          A thin bar pinned to the very top of the homepage, above the navigation.
           Write one message per line and pick how the text moves.
         </p>
       </div>
@@ -240,7 +240,7 @@ $csrf = ddAdminCsrf();
             <div class="form-group">
               <label for="speed">Speed (seconds)</label>
               <input type="number" name="speed" id="speed" class="form-input" min="2" max="120" value="<?= (int)$a['speed'] ?>">
-              <p class="form-help">Ticker: seconds for one full pass (higher = slower). Slide / fade: seconds each message stays.</p>
+              <p class="form-help">Ticker: seconds for one full pass (higher = slower). Slide / fade / drift: seconds each message holds still before the next one.</p>
             </div>
 
             <div class="form-group full">
