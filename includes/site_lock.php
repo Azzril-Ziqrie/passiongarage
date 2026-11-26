@@ -8,7 +8,7 @@
  */
 
 const SITE_LOCK_KEY              = 'site_lock';
-const SITE_LOCK_DEFAULT_PASSWORD = 'passion garage';
+const SITE_LOCK_DEFAULT_PASSWORD = 'passiongarage';
 const SITE_LOCK_MIN_LENGTH       = 4;
 const SITE_LOCK_DEFAULT_MESSAGE  = 'Website under maintenance';
 
