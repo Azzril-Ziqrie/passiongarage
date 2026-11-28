@@ -67,8 +67,10 @@ $orderUploaded   = trim((string)($_GET['order'] ?? ''));
 
 /* ── data ────────────────────────────────────────────── */
 $schema     = catalogSchema($pdo);
-// Banner hero = slideshow gambar (assets/images/hero/banner-N.jpg + versi -960 untuk layar kecil).
-// Gambar pertama dipakai juga untuk og:image. Video lama (assets/video/hero.mp4) kini jadi latar site lock.
+// Banner hero = slideshow: video (sama dengan latar site lock) lalu gambar assets/images/hero/banner-N.jpg
+// (+ versi -960 untuk layar kecil). Gambar pertama dipakai juga untuk og:image.
+const HERO_VIDEO        = 'assets/video/hero.mp4';
+const HERO_VIDEO_MOBILE = 'assets/video/hero-mobile.mp4';
 const HERO_SLIDES   = 5;
 const HERO_INTERVAL = 5000; // ms per gambar
 const HERO_POSTER   = 'assets/images/hero/banner-1.jpg';
@@ -137,8 +139,11 @@ siteBodyOpen([
   <main class="home-main">
     <section class="hero" aria-label="Featured">
       <div class="hero-slides">
+        <?php /* slide video (sama dengan latar site lock); src dipilih JS: vertikal di HP, landscape di desktop */ ?>
+        <video class="hero-slide hero-slide--video" muted playsinline preload="metadata" aria-hidden="true"
+               data-src="<?= HERO_VIDEO ?>" data-src-mobile="<?= HERO_VIDEO_MOBILE ?>"></video>
         <?php for ($i = 1; $i <= HERO_SLIDES; $i++): ?>
-        <img class="hero-slide<?= $i === 1 ? ' is-active' : '' ?>"
+        <img class="hero-slide"
              src="assets/images/hero/banner-<?= $i ?>.jpg"
              srcset="assets/images/hero/banner-<?= $i ?>-960.jpg 960w, assets/images/hero/banner-<?= $i ?>.jpg 1920w"
              sizes="100vw" width="1920" height="1080"
@@ -148,14 +153,45 @@ siteBodyOpen([
       </div>
       <script>
       (function () {
-        var slides = document.currentScript.previousElementSibling.children, cur = 0;
-        if (slides.length < 2) return;
-        setInterval(function () {
-          if (document.hidden) return;
-          slides[cur].classList.remove('is-active');
+        var slides = document.currentScript.previousElementSibling.children, cur = 0, timer = null;
+        var mobile = matchMedia('(max-width: 768px)');
+        var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Gambar tampil HERO_INTERVAL ms; video diputar sampai habis lalu lanjut ke slide berikutnya.
+        function pickSrc(v) {
+          var src = mobile.matches ? v.dataset.srcMobile : v.dataset.src;
+          if (v.getAttribute('src') !== src) v.src = src;
+        }
+        function next() {
+          var prev = slides[cur];
+          prev.classList.remove('is-active');
           cur = (cur + 1) % slides.length;
-          slides[cur].classList.add('is-active');
-        }, <?= HERO_INTERVAL ?>);
+          show();
+          if (prev.tagName === 'VIDEO') setTimeout(function () { prev.pause(); }, 1300); // tunggu fade selesai
+        }
+        function show() {
+          clearTimeout(timer);
+          var s = slides[cur];
+          s.classList.add('is-active');
+          if (s.tagName === 'VIDEO' && !still) {
+            pickSrc(s);
+            s.currentTime = 0;
+            s.onended = next;
+            s.play().catch(function () { timer = setTimeout(next, <?= HERO_INTERVAL ?>); });
+          } else if (slides.length > 1) {
+            timer = setTimeout(function wait() {
+              if (document.hidden) { timer = setTimeout(wait, 1000); return; }
+              next();
+            }, <?= HERO_INTERVAL ?>);
+          }
+        }
+        // reduced motion: lewati video, mulai dari gambar pertama
+        if (still) { for (var i = 0; i < slides.length; i++) if (slides[i].tagName !== 'VIDEO') { cur = i; break; } }
+        mobile.addEventListener && mobile.addEventListener('change', function () {
+          var s = slides[cur];
+          if (s.tagName === 'VIDEO' && !still) { pickSrc(s); s.play().catch(function () {}); }
+        });
+        show();
       })();
       </script>
       <?php if (!$isFiltered): ?>

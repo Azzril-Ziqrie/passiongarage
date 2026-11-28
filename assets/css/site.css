@@ -351,7 +351,10 @@ button{cursor:pointer;background:none;border:none}
 
 .footer{padding:var(--ft-gap) 0 36px}
 .footer-brand{display:none}   /* logo footer hanya tampil di beranda (home.css) */
-.footer-copy{display:block;font-size:11px;line-height:1.7;letter-spacing:.02em;color:var(--mute)}
+.footer-copy{display:block;white-space:nowrap;font-size:11px;line-height:1.7;letter-spacing:.02em;color:var(--mute)}
+.footer-credit{color:inherit;text-decoration:underline;text-underline-offset:2px;transition:opacity .2s ease}
+.footer-credit:hover{opacity:.6}
+@media(max-width:600px){.footer-copy{font-size:min(11px,2.45vw)}}
 
 @media(min-width:900px){
   .footer-inner{

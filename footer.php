@@ -31,9 +31,24 @@
 
     <a class="footer-brand" href="index.php" aria-label="<?= esc(BRAND_NAME) ?>"><img src="<?= esc(BRAND_LOGO) ?>" alt=""></a>
 
-    <div class="footer"><span class="footer-copy">© <?= date('Y') ?> <?= esc(BRAND_NAME) ?>. All rights reserved.</span></div>
+    <div class="footer"><span class="footer-copy">© <?= date('Y') ?> <?= esc(BRAND_NAME) ?>. All rights reserved. Development by <a class="footer-credit" href="https://cantum-studio.site" target="_blank" rel="noopener">Cantum Studio</a></span></div>
   </div>
 </footer>
+<script>
+// Copyright satu baris: kalau masih lebih lebar dari footer (font/layar sangat sempit), kecilkan hurufnya sampai muat.
+(function () {
+  var el = document.querySelector('.footer-copy');
+  if (!el) return;
+  function fit() {
+    el.style.fontSize = '';
+    var box = el.parentNode.clientWidth, size = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > box && size > 7) { size -= 0.25; el.style.fontSize = size + 'px'; }
+  }
+  fit();
+  addEventListener('resize', fit);
+  document.fonts && document.fonts.ready.then(fit);
+})();
+</script>
 <?php if (BRAND_NEWSLETTER): ?>
 <script>
 (function () {

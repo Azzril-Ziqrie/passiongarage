@@ -90,6 +90,8 @@ body.home .brand-mark img{height:34px}
 .hero-slides{position:absolute;inset:0}
 .hero-slide{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.2s ease}
 .hero-slide.is-active{opacity:1}
+.hero-slide--video{background:#111 url(../video/hero-poster.jpg) center/cover no-repeat}
+@media(max-width:768px){.hero-slide--video{background-image:url(../video/hero-mobile-poster.jpg)}}
 @media(prefers-reduced-motion:reduce){.hero-slide{transition:opacity .3s linear}}
 @media(min-width:900px){.hero{height:calc(100svh - var(--nav-h) - var(--announce-h));min-height:520px}}
 
@@ -152,13 +154,15 @@ body.home .footer-news__btn:hover{background:transparent;opacity:.55}
 body.home .footer-news__msg{min-height:0;font-size:inherit}
 body.home .footer-news__msg:empty{display:none}
 body.home .footer-copy{font-size:inherit;line-height:inherit}
+/* copyright + credit selalu satu baris: di layar sempit huruf mengecil mengikuti lebar (footer.php mengecilkan lagi bila perlu) */
+@media(max-width:600px){.footer-copy,body.home .footer-copy{font-size:min(11px,2.45vw)}}
 @media(min-width:900px){
   body.home .footer-inner{grid-template-columns:repeat(8,minmax(0,1fr));column-gap:var(--home-gap);align-items:start}
   body.home .footer-group:first-child{grid-column:1 / 3;grid-row:1}        /* tepi kiri sejajar margin */
   body.home .footer-group:nth-child(2){grid-column:6 / 8;grid-row:1}
   body.home .footer-news{grid-column:3 / 5;grid-row:1;max-width:calc(100% - 56px)}
   body.home .footer-brand{grid-column:4 / 6;grid-row:1;align-self:start;padding:2px 0 0}
-  body.home .footer{grid-column:8;grid-row:1;padding:2px 0 0;text-align:right}   /* ujung kanan sejajar margin */
+  body.home .footer{grid-column:1 / -1;grid-row:2;padding:clamp(32px,4vw,56px) 0 0;text-align:right}   /* baris sendiri, rata kanan sejajar margin */
 }
 @media(max-width:899px){
   body.home .footer-links-row{display:grid;gap:20px}

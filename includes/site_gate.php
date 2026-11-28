@@ -14,6 +14,10 @@ if (!$siteLock['enabled']) {
 
 const SITE_GATE_VIDEO  = 'assets/video/hero.mp4';
 const SITE_GATE_POSTER = 'assets/video/hero-poster.jpg';
+// Layar portrait/HP (≤ 768px) pakai video vertikal sendiri.
+const SITE_GATE_MOBILE_QUERY  = '(max-width: 768px)';
+const SITE_GATE_VIDEO_MOBILE  = 'assets/video/hero-mobile.mp4';
+const SITE_GATE_POSTER_MOBILE = 'assets/video/hero-mobile-poster.jpg';
 
 $lockError = false;
 
@@ -53,7 +57,8 @@ header('Cache-Control: no-store');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>PassionGarage</title>
-  <link rel="preload" as="image" href="<?= SITE_GATE_POSTER ?>">
+  <link rel="preload" as="image" href="<?= SITE_GATE_POSTER ?>" media="not all and <?= SITE_GATE_MOBILE_QUERY ?>">
+  <link rel="preload" as="image" href="<?= SITE_GATE_POSTER_MOBILE ?>" media="<?= SITE_GATE_MOBILE_QUERY ?>">
   <link rel="preload" href="assets/fonts/HelveticaNowText-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/fonts.css">
   <style>
@@ -81,6 +86,9 @@ header('Cache-Control: no-store');
       object-fit: cover; object-position: center;
       background: #111 url('<?= SITE_GATE_POSTER ?>') center / cover no-repeat;
       z-index: 0;
+    }
+    @media <?= SITE_GATE_MOBILE_QUERY ?> {
+      .bg { background-image: url('<?= SITE_GATE_POSTER_MOBILE ?>'); }
     }
     .veil {
       position: fixed; inset: 0; z-index: 1;
@@ -202,8 +210,24 @@ header('Cache-Control: no-store');
   </style>
 </head>
 <body>
-  <video class="bg" src="<?= SITE_GATE_VIDEO ?>" poster="<?= SITE_GATE_POSTER ?>" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
-  <script>if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.currentScript.previousElementSibling.pause();</script>
+  <?php /* tanpa atribut poster: poster per ukuran layar tampil lewat background CSS .bg */ ?>
+  <video class="bg" autoplay muted loop playsinline preload="auto" aria-hidden="true"
+         data-src="<?= SITE_GATE_VIDEO ?>" data-src-mobile="<?= SITE_GATE_VIDEO_MOBILE ?>"></video>
+  <script>
+  (function () {
+    var v = document.currentScript.previousElementSibling;
+    var mobile = matchMedia('<?= SITE_GATE_MOBILE_QUERY ?>');
+    function pick() {
+      var src = mobile.matches ? v.dataset.srcMobile : v.dataset.src;
+      if (v.getAttribute('src') === src) return;
+      v.src = src;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause();
+      else v.play().catch(function () {});
+    }
+    pick();
+    mobile.addEventListener ? mobile.addEventListener('change', pick) : mobile.addListener(pick);
+  })();
+  </script>
   <div class="veil" aria-hidden="true"></div>
 
   <main class="stage<?= !$unlocked && !$lockError ? ' stage--intro' : '' ?>">
