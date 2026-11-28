@@ -21,10 +21,12 @@ siteBodyOpen(['bodyClass' => 'page-contact', 'searchAction' => 'shop.php']);
         <h1 class="doc-title">Contact Us</h1>
       </header>
 
-      <p class="doc-text reveal">For any questions, inquiries, and custom works / collaborations, or if you wanna just share and connect, hit up via instagram or email:</p>
-      <p class="doc-text reveal">PassionGarage<br><a href="mailto:contact@passiongarage.co">contact@passiongarage.co</a></p>
+      <p class="doc-text reveal">Got a question about an order, a size, or a piece you’re hunting for? Want to work with us? Email us or send a message on Instagram.</p>
+      <?php if (BRAND_EMAIL !== ''): ?>
+      <p class="doc-text reveal">Email<br><a href="mailto:<?= esc(BRAND_EMAIL) ?>"><?= esc(BRAND_EMAIL) ?></a></p>
+      <?php endif; ?>
       <?php if (BRAND_INSTAGRAM !== ''): ?>
-      <p class="doc-text reveal">Instagram<br><a href="<?= esc(BRAND_INSTAGRAM) ?>" target="_blank" rel="noopener">Follow us on Instagram</a></p>
+      <p class="doc-text reveal">Instagram<br><a href="<?= esc(BRAND_INSTAGRAM) ?>" target="_blank" rel="noopener">@passiongarage</a></p>
       <?php endif; ?>
     </article>
   </main>

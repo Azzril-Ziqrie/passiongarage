@@ -18,11 +18,11 @@ const HOME_JOURNAL_SHOW_TEXT = false;
 
 /** Teks brand di atas video pertama di homepage (item bisa menimpanya dengan caption sendiri). */
 const HOME_VIDEO_CAPTION = [
-    'title'     => 'Inspired by Breakin’. Tools for the Creative Mind.',
-    'text'      => 'Teks pengantar PassionGarage di sini.',
-    'more'      => 'Check out our story and approach ',
+    'title'     => 'Vintage fashion from Yogyakarta, since 2018.',
+    'text'      => 'Pieces from leading brands, picked to match how people dress right now.',
+    'more'      => 'Read our story ',
     'link_text' => 'here',
-    'link'      => 'lookbook.php',
+    'link'      => 'about.php',
 ];
 
 function isVideoItem(array $item): bool

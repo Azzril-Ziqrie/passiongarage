@@ -23,19 +23,19 @@ siteBodyOpen(['bodyClass' => 'page-terms', 'searchAction' => 'shop.php']);
 
       <section class="doc-sec reveal">
         <h2>General</h2>
-        <p>This website is operated by <?= esc(BRAND_NAME) ?>. By visiting our site and/or purchasing from us, you agree to be bound by the following terms.</p>
+        <p><?= esc(BRAND_NAME) ?> runs this website. When you visit it or buy from us, you agree to these terms.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Payments and charges</h2>
-        <p>All orders are charged in USD. Prices shown in other currencies are estimates. Shipping costs depend on your order total, delivery location and selected shipping method.</p>
+        <p>We charge every order in USD. Prices in other currencies are estimates. Your shipping cost depends on where we deliver and the courier you choose.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Shipping</h2>
-        <p>Orders are prepared for shipment within 1–2 working days after payment confirmation, unless otherwise stated.</p>
+        <p>We pack your order within 1–2 working days after your payment clears, unless we tell you otherwise.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Exchange &amp; returns</h2>
-        <p>All sales are final unless the item received is defective or incorrect. Requests must be submitted within 3 days of receiving the order.</p>
+        <p>All sales are final. If an item arrives defective, or we sent the wrong one, contact us within 3 days of delivery. See <a href="shipping.php">Shipping &amp; Returns</a> for details.</p>
       </section>
     </article>
   </main>

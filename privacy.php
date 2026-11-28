@@ -20,102 +20,102 @@ siteBodyOpen(['bodyClass' => 'page-privacy', 'searchAction' => 'shop.php']);
         <p class="doc-eyebrow">Privacy</p>
         <h1 class="doc-title">Privacy</h1>
       </header>
-      <p class="doc-text reveal">Your privacy is important to us. It is PassionGarage' policy to respect your privacy and comply with any applicable law and regulation regarding any personal information we may collect about you, including across our website, <a href="https://passiongarage.co">https://passiongarage.co</a>, and other sites we own and operate.</p>
-      <p class="doc-text reveal">This policy is effective as of 28 January 2022 and was last updated on 28 January 2022.</p>
+      <p class="doc-text reveal"><?= esc(BRAND_NAME) ?> respects your privacy. This policy explains what personal information we collect on this website and the other sites we run, how we use it, and the laws we follow when we handle it.</p>
+      <p class="doc-text reveal">This policy took effect on 28 January 2022. We last updated it on 28 November 2026.</p>
 
       <section class="doc-sec reveal">
         <h2>Information We Collect</h2>
-        <p>Information we collect includes both information you knowingly and actively provide us when using or participating in any of our services and promotions, and any information automatically sent by your devices in the course of accessing our products and services.</p>
+        <p>We collect two kinds of information: what you give us when you use our services or join a promotion, and what your device sends us when you visit.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Log Data</h2>
-        <p>When you visit our website, our servers may automatically log the standard data provided by your web browser. It may include your device’s Internet Protocol (IP) address, your browser type and version, the pages you visit, the time and date of your visit, the time spent on each page, other details about your visit, and technical details that occur in conjunction with any errors you may encounter.</p>
-        <p>Please be aware that while this information may not be personally identifying by itself, it may be possible to combine it with other data to personally identify individual persons.</p>
+        <p>Our servers may record the standard data your browser sends when you visit. That can include your IP address, browser type and version, the pages you open, the date and time of your visit, how long you stay on each page, and technical details about any errors you hit.</p>
+        <p>This data may not identify you on its own. Someone could still combine it with other data to identify you.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Personal Information</h2>
-        <p>We may ask for personal information which may include one or more of the following:</p>
+        <p>We may ask you for:</p>
         <ul>
           <li>Name</li>
           <li>Email</li>
-          <li>Phone/mobile number</li>
-          <li>Home/mailing address</li>
+          <li>Phone or mobile number</li>
+          <li>Home or mailing address</li>
         </ul>
       </section>
       <section class="doc-sec reveal">
-        <h2>Legitimate Reasons for Processing Your Personal Information</h2>
-        <p>We only collect and use your personal information when we have a legitimate reason for doing so. In which instance, we only collect personal information that is reasonably necessary to provide our services to you.</p>
+        <h2>Why We Process Your Personal Information</h2>
+        <p>We collect and use your personal information only when we have a legitimate reason. When we do, we collect only what we need to serve you.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Collection and Use of Information</h2>
-        <p>We may collect personal information from you when you do any of the following on our website:</p>
+        <p>We may collect personal information when you:</p>
         <ul>
-          <li>Sign up to receive updates from us via email or social media channels</li>
-          <li>Use a mobile device or web browser to access our content</li>
-          <li>Contact us via email, social media, or on any similar technologies</li>
-          <li>When you mention us on social media</li>
+          <li>Sign up for updates by email or on social media</li>
+          <li>Open our content in a browser or on a mobile device</li>
+          <li>Contact us by email, social media or a similar channel</li>
+          <li>Mention us on social media</li>
         </ul>
-        <p>We may collect, hold, use, and disclose information for the following purposes, and personal information will not be further processed in a manner that is incompatible with these purposes:</p>
+        <p>We may collect, hold, use and disclose your information for the purposes below. We won’t use it in a way that conflicts with them.</p>
         <ul>
-          <li>to enable you to customise or personalise your experience of our website</li>
-          <li>to contact and communicate with you</li>
-          <li>for internal record keeping and administrative purposes</li>
-          <li>to comply with our legal obligations and resolve any disputes that we may have</li>
+          <li>To let you customise your experience on our website</li>
+          <li>To contact and talk with you</li>
+          <li>For internal records and administration</li>
+          <li>To meet our legal obligations and resolve disputes</li>
         </ul>
-        <p>Please be aware that we may combine information we collect about you with general information or research data we receive from other trusted sources.</p>
+        <p>We may combine what we collect about you with general information or research data from other trusted sources.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Security of Your Personal Information</h2>
-        <p>When we collect and process personal information, and while we retain this information, we will protect it within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use, or modification.</p>
-        <p>Although we will do our best to protect the personal information you provide to us, we advise that no method of electronic transmission or storage is 100% secure, and no one can guarantee absolute data security. We will comply with laws applicable to us in respect of any data breach.</p>
-        <p>You are responsible for selecting any password and its overall security strength, ensuring the security of your own information within the bounds of our services.</p>
+        <p>While we hold your personal information, we protect it with commercially acceptable means against loss, theft, and unauthorised access, disclosure, copying, use or change.</p>
+        <p>We do our best, but no method of sending or storing data online is 100% secure, and nobody can promise complete security. If a data breach happens, we will follow the laws that apply to us.</p>
+        <p>You choose your password and keep it strong and private.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>How Long We Keep Your Personal Information</h2>
-        <p>We keep your personal information only for as long as we need to. This time period may depend on what we are using your information for, in accordance with this privacy policy. If your personal information is no longer required, we will delete it or make it anonymous by removing all details that identify you.</p>
-        <p>However, if necessary, we may retain your personal information for our compliance with a legal, accounting, or reporting obligation or for archiving purposes in the public interest, scientific, or historical research purposes or statistical purposes.</p>
+        <p>We keep your personal information only as long as we need it for the purposes in this policy. Once we no longer need it, we delete it or remove every detail that identifies you.</p>
+        <p>We may keep some information longer to meet a legal, accounting or reporting obligation, or for archiving in the public interest, research or statistics.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Children’s Privacy</h2>
-        <p>We do not aim any of our products or services directly at children under the age of 13, and we do not knowingly collect personal information about children under 13.</p>
+        <p>We don’t aim our products or services at children under 13, and we don’t knowingly collect personal information about them.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Disclosure of Personal Information to Third Parties</h2>
-        <p>We may disclose personal information to:</p>
+        <p>We may share personal information with:</p>
         <ul>
-          <li>a parent, subsidiary, or affiliate of our company</li>
-          <li>third party service providers for the purpose of enabling them to provide their services, for example, IT service providers, data storage, hosting and server providers, advertisers, or analytics platforms</li>
-          <li>our employees, contractors, and/or related entities</li>
-          <li>our existing or potential agents or business partners</li>
-          <li>sponsors or promoters of any competition, sweepstakes, or promotion we run</li>
-          <li>courts, tribunals, regulatory authorities, and law enforcement officers, as required by law, in connection with any actual or prospective legal proceedings, or in order to establish, exercise, or defend our legal rights</li>
-          <li>third parties, including agents or sub-contractors, who assist us in providing information, products, services, or direct marketing to you third parties to collect and process data</li>
+          <li>A parent company, subsidiary or affiliate</li>
+          <li>Service providers who need it to do their work for us, such as IT, data storage, hosting, advertising and analytics providers</li>
+          <li>Our employees, contractors and related entities</li>
+          <li>Our current or potential agents and business partners</li>
+          <li>Sponsors or promoters of a competition or promotion we run</li>
+          <li>Courts, tribunals, regulators and law enforcement, when the law requires it, in connection with legal proceedings, or to establish, use or defend our legal rights</li>
+          <li>Third parties, including agents and subcontractors, who help us provide information, products, services or direct marketing to you, or who collect and process data for us</li>
         </ul>
       </section>
       <section class="doc-sec reveal">
         <h2>International Transfers of Personal Information</h2>
-        <p>The personal information we collect is stored and/or processed where we or our partners, affiliates, and third-party providers maintain facilities. Please be aware that the locations to which we store, process, or transfer your personal information may not have the same data protection laws as the country in which you initially provided the information. If we transfer your personal information to third parties in other countries: (i) we will perform those transfers in accordance with the requirements of applicable law; and (ii) we will protect the transferred personal information in accordance with this privacy policy.</p>
+        <p>We and our partners, affiliates and service providers store and process personal information wherever we keep facilities. Those places may have different data protection laws from your country. If we transfer your information to a third party in another country, we will (i) follow the applicable law for that transfer and (ii) protect the information as this policy describes.</p>
       </section>
       <section class="doc-sec reveal">
-        <h2>Your Rights and Controlling Your Personal Information</h2>
-        <p>You always retain the right to withhold personal information from us, with the understanding that your experience of our website may be affected. We will not discriminate against you for exercising any of your rights over your personal information. If you do provide us with personal information you understand that we will collect, hold, use and disclose it in accordance with this privacy policy. You retain the right to request details of any personal information we hold about you.</p>
-        <p>If we receive personal information about you from a third party, we will protect it as set out in this privacy policy. If you are a third party providing personal information about somebody else, you represent and warrant that you have such person’s consent to provide the personal information to us.</p>
-        <p>If you have previously agreed to us using your personal information for direct marketing purposes, you may change your mind at any time. We will provide you with the ability to unsubscribe from our email-database or opt out of communications. Please be aware we may need to request specific information from you to help us confirm your identity.</p>
-        <p>If you believe that any information we hold about you is inaccurate, out of date, incomplete, irrelevant, or misleading, please contact us using the details provided in this privacy policy. We will take reasonable steps to correct any information found to be inaccurate, incomplete, misleading, or out of date.</p>
-        <p>If you believe that we have breached a relevant data protection law and wish to make a complaint, please contact us using the details below and provide us with full details of the alleged breach. We will promptly investigate your complaint and respond to you, in writing, setting out the outcome of our investigation and the steps we will take to deal with your complaint. You also have the right to contact a regulatory body or data protection authority in relation to your complaint.</p>
+        <h2>Your Rights</h2>
+        <p>You can choose not to give us personal information. Some parts of the website may then work differently for you. We won’t treat you differently for using your rights. If you do give us personal information, we will collect, hold, use and disclose it as this policy describes. You can ask us for the details of any personal information we hold about you.</p>
+        <p>If a third party gives us personal information about you, we protect it under this policy. If you give us personal information about someone else, you confirm that you have their consent.</p>
+        <p>If you agreed to receive direct marketing from us, you can change your mind at any time. You can unsubscribe from our emails or opt out of our messages. We may ask you for some details to confirm your identity first.</p>
+        <p>If you think any information we hold about you is wrong, out of date, incomplete, irrelevant or misleading, contact us. We will take reasonable steps to correct it.</p>
+        <p>If you think we have broken a data protection law and want to complain, contact us with the full details. We will look into your complaint, reply in writing with what we found, and tell you what we will do about it. You can also take your complaint to a regulator or data protection authority.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Use of Cookies</h2>
-        <p>We use “cookies” to collect information about you and your activity across our site. A cookie is a small piece of data that our website stores on your computer, and accesses each time you visit, so we can understand how you use our site. This helps us serve you content based on preferences you have specified.</p>
+        <p>We use cookies to learn how you use our site. A cookie is a small piece of data our website saves on your device and reads on each visit. Cookies let us show you content that matches the preferences you set.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Limits of Our Policy</h2>
-        <p>Our website may link to external sites that are not operated by us. Please be aware that we have no control over the content and policies of those sites, and cannot accept responsibility or liability for their respective privacy practices.</p>
+        <p>Our website may link to sites we don’t run. We don’t control their content or policies, and we can’t take responsibility for how they handle your privacy.</p>
       </section>
       <section class="doc-sec reveal">
         <h2>Changes to This Policy</h2>
-        <p>At our discretion, we may change our privacy policy to reflect updates to our business processes, current acceptable practices, or legislative or regulatory changes. If we decide to change this privacy policy, we will post the changes here at the same link by which you are accessing this privacy policy.</p>
-        <p>If required by law, we will get your permission or give you the opportunity to opt in to or opt out of, as applicable, any new uses of your personal information.</p>
+        <p>We may change this policy to reflect changes in how we work, in accepted practice, or in the law. When we do, we will post the new version on this page.</p>
+        <p>Where the law requires it, we will ask your permission, or let you opt in or out, before we use your personal information in a new way.</p>
       </section>
     </article>
   </main>

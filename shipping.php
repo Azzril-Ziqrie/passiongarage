@@ -9,7 +9,7 @@ require_once __DIR__ . '/includes/layout.php';
 
 siteHeadOpen([
     'title'       => 'Shipping & Returns',
-    'description' => 'Shipping rates, the free shipping threshold and the return and exchange policy of ' . BRAND_NAME . '.',
+    'description' => 'Shipping rates, dispatch times and the return policy of ' . BRAND_NAME . '.',
     'css'         => ['assets/css/pages.css'],
 ]);
 siteBodyOpen(['bodyClass' => 'page-shipping', 'searchAction' => 'shop.php']);
@@ -23,28 +23,24 @@ siteBodyOpen(['bodyClass' => 'page-shipping', 'searchAction' => 'shop.php']);
       <section class="doc-group reveal">
         <h2 class="doc-eyebrow">Shipping</h2>
 
-        <h3 class="doc-label">International Shipping</h3>
-        <p class="doc-text">Flat fee - $25</p>
-        <p class="doc-text">FREE with purchase of $150 or more.</p>
-        <p class="doc-text">*Use CODE: 150/DAYS</p>
+        <h3 class="doc-label">Shipping cost</h3>
+        <p class="doc-text">We ship across Indonesia and worldwide. Enter your address at checkout and you’ll see the courier options and the exact cost before you pay.</p>
 
-        <h3 class="doc-label">Indonesia Domestic Shipping</h3>
-        <p class="doc-text">Free Shipping</p>
+        <h3 class="doc-label">International orders</h3>
+        <p class="doc-text">Your country may charge tax or import duty on arrival. Read more in the <a href="faq.php">FAQ</a>.</p>
 
-        <p class="doc-text">*Learn more about taxes on global orders</p>
+        <h3 class="doc-label">Dispatch</h3>
+        <p class="doc-text">We pack and send your order from Yogyakarta within 1–2 working days after your payment clears.</p>
       </section>
 
       <section class="doc-group reveal">
         <h2 class="doc-eyebrow">Returns &amp; Exchanges</h2>
 
-        <h3 class="doc-label">7 Days to Inquire Return</h3>
-        <h3 class="doc-label">No Refunds</h3>
+        <h3 class="doc-label">All sales are final</h3>
+        <p class="doc-text">We sell vintage, so we can’t take returns for a change of mind or a size that doesn’t fit. Check the size guide on each product page before you order.</p>
 
-        <h3 class="doc-label">Return Cost</h3>
-        <p class="doc-text">In the case of defective product(s), wrong item(s), sizing and/or color, you are entitled to return them to us for an exchange within 7 days of receipt. Return shipping fees will be covered by <?= esc(BRAND_NAME) ?>.</p>
-        <p class="doc-text">If you have received the correct item but want to change color/size, you can inquire an exchange within 7 days of receipt. Shipping fees both ways will be covered by the individual. Return fee to the individual will be charged accordingly (rate is measured by weight), and not with the flat $25 fee.</p>
-        <p class="doc-text">Do contact us to inquire the availability of your choice of size/color and return shipping rate to your location.</p>
-        <p class="doc-text">Purchased item must not have been used/worn and is still in perfect original saleable condition, in the original packaging and with all tags attached.</p>
+        <h3 class="doc-label">Defective or wrong item</h3>
+        <p class="doc-text">If your order arrives damaged, or we sent the wrong item, contact us within 3 days of delivery. Send photos of the item and your order number, and we’ll sort it out with you.</p>
       </section>
     </article>
   </main>
