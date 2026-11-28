@@ -7,8 +7,8 @@ header('Content-Type: text/plain; charset=utf-8');
 $origin = BRAND_URL;
 
 echo '# ' . BRAND_NAME . " (PassionGarage)\n\n";
-echo '> ' . BRAND_TAGLINE . ' ' . BRAND_NAME . ' is a clothing and gear brand founded in ' . BRAND_EST
-   . ', inspired by breakin’ (breakdance) culture: “Tools for the Creative Mind”. Products are designed for the active creative, balancing comfort, style and function. Prices are listed in USD and do not include taxes.' . "\n\n";
+echo '> ' . BRAND_TAGLINE . ' ' . BRAND_NAME . ' is a vintage fashion store founded in ' . BRAND_EST
+   . ' in Yogyakarta, Indonesia. It sells vintage clothing from leading brands, follows current trends, and ships to thousands of customers in Indonesia and abroad. Prices are listed in USD and do not include taxes.' . "\n\n";
 
 echo "## About\n";
 foreach (brandAboutCopy() as $line) {

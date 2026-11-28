@@ -3,7 +3,7 @@
 
 const BRAND_NAME    = 'PassionGarage';
 const BRAND_URL    = 'https://passiongarage.co';   // domain utama, dipakai canonical, sitemap, JSON-LD
-const BRAND_EST     = '2026';   // tahun berdiri, tampil di halaman About
+const BRAND_EST     = '2018';   // tahun berdiri, tampil di halaman About
 const BRAND_TAGLINE = 'Your passion, our garage.';
 const BRAND_LOGO    = 'assets/images/passiongarage-logo.png';   // hitam, transparan
 const BRAND_ICON    = 'assets/images/passiongarage-icon.png';
@@ -28,8 +28,9 @@ const BRAND_NEWSLETTER = true;
 function brandAboutCopy(): array
 {
     return [
-        'PassionGarage — tulis pernyataan brand di sini.',
-        'Paragraf tentang PassionGarage, bengkel dan layanannya.',
-        'Paragraf pendamping.'
+        'Vintage fashion from Yogyakarta.',
+        'We started PassionGarage in Yogyakarta, Indonesia, in 2018. We sell vintage clothing from leading brands and keep pace with the trends of each season.',
+        'You’ll find pieces from labels you know, picked to match how people dress right now. Our racks change as the trends shift, so check back.',
+        'Thousands of customers in Indonesia and around the world shop with us. We pack and ship their orders from our base in Yogyakarta.'
     ];
 }
