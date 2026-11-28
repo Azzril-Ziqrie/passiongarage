@@ -125,6 +125,7 @@ $navGroups = [
     'Orders & shipping' => [
         ['dashboard-orders.php', 'i-bag', 'Orders', $totalPendingOrders],
         ['send-resi.php', 'i-truck', 'Send tracking', null],
+        ['dashboard-free-shipping.php', 'i-truck', 'Free shipping', null],
     ],
     'Catalog' => [
         ['dashboard-product.php', 'i-box', 'Products', null],

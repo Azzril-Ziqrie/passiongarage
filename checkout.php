@@ -6,6 +6,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/currency_helper.php';
 require_once __DIR__ . '/includes/pricing.php';
 require_once __DIR__ . '/includes/promo.php';
+require_once __DIR__ . '/includes/free_shipping.php';
 require_once __DIR__ . '/config/kasera_client.php';
 require_once __DIR__ . '/config/intl_shipping.php';
 require_once __DIR__ . '/includes/order_payment.php';
@@ -547,6 +548,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_apply_promo'])) 
 // Rate konversi ongkir (1 USD = ... IDR) — sinkron dengan JS
 $usdRateFromIdr = ddRateFromIdr();
 
+// Gratis ongkir dari admin (includes/free_shipping.php); dicek ulang di server saat order dibuat.
+$freeShipping = freeShippingSettings($pdo);
+
 $message = ''; $error = '';
 
 // Set ke true untuk mengaktifkan kembali pengiriman internasional
@@ -589,6 +593,11 @@ if (!$payOrder && $_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax_u
                   $form['courier_code'], $form['courier_service'], $totalWeightGram
               )) === null) {
         $error = 'Could not verify the shipping cost. Please re-select your destination and courier service.';
+    } elseif (
+        // Gratis ongkir: ongkir server jadi 0 sebelum promo & total dihitung (ekspresi selalu false, hanya menyetel nilai).
+        ($serverShippingIdr = freeShippingApplies($freeShipping, $form['shipping_mode'], $subtotal) ? 0.0 : $serverShippingIdr) < 0
+    ) {
+        $error = 'Invalid shipping amount.';
     } elseif (($promoResult = promoResolve(
                   $pdo, (string)($_POST['promo_code'] ?? ''), $subtotal, ddConvertFromIdr($serverShippingIdr)
               ))['error'] !== null) {
@@ -1172,6 +1181,9 @@ siteBodyOpen(['bodyClass' => 'page-checkout', 'searchAction' => 'shop.php']);
               <select id="courier_picker"></select>
             </div>
             <div id="shippingOptions" class="shipping-options-box">Enter your shipping address to view available shipping methods.</div>
+            <?php if (($freeShippingNote = freeShippingSummary($freeShipping)) !== ''): ?>
+            <p class="field-hint ok"><?= htmlspecialchars($freeShippingNote) ?></p>
+            <?php endif; ?>
             <details class="opt" id="promoBox"<?= $form['promo_code'] !== '' ? ' open' : '' ?>>
               <summary>Have a promo code?</summary>
               <div class="promo-row">
@@ -1480,6 +1492,14 @@ siteBodyClose();
     const CUR_RATE_FROM_IDR     = <?= ddRateFromIdr() ?>; // 1 USD = ... IDR (ongkir kurir dalam IDR)
     const domesticCouriers      = <?= json_encode($domesticCouriers) ?>;
     const internationalCouriers = <?= json_encode($internationalCouriers) ?>;
+    // Gratis ongkir dari admin; rumus sama dengan freeShippingApplies() di PHP (server tetap menghitung ulang).
+    const FREE_SHIPPING         = <?= json_encode(['enabled' => $freeShipping['enabled'], 'scope' => $freeShipping['scope'], 'min' => $freeShipping['min_subtotal']]) ?>;
+    function freeShippingApplies() {
+      if (!FREE_SHIPPING.enabled) return false;
+      const isDom = document.getElementById('shipping_mode').value === 'domestic';
+      if ((FREE_SHIPPING.scope === 'domestic' && !isDom) || (FREE_SHIPPING.scope === 'international' && isDom)) return false;
+      return subtotal + 0.000001 >= FREE_SHIPPING.min;
+    }
 
     /* ── DOM refs ───────────────────────────────────── */
     const shippingModeEl       = document.getElementById('shipping_mode');
@@ -1579,7 +1599,8 @@ siteBodyClose();
       }
       // Belum ada layanan kurir dipilih → tampilkan petunjuk, bukan "RP 0"
       const hasService = courierServiceInput.value !== '';
-      shippingDisplay.textContent   = hasService ? formatCurrencyJS(shippingConverted) : 'Enter shipping address';
+      const isFree     = hasService && shippingConverted === 0 && freeShippingApplies();
+      shippingDisplay.textContent   = isFree ? 'Free' : (hasService ? formatCurrencyJS(shippingConverted) : 'Enter shipping address');
       shippingDisplay.style.color   = hasService ? '' : 'var(--muted)';
       grandTotalDisplay.textContent = formatCurrencyJS(total);
       heroGrandTotal.textContent    = formatCurrencyJS(total);
@@ -1819,9 +1840,14 @@ siteBodyClose();
         if (!rows.length) { shippingOptionsEl.textContent = 'No shipping services found.'; return; }
 
         shippingOptionsEl.innerHTML = '';
+        const isFree = freeShippingApplies();
         rows.forEach((row, idx) => {
-          const costIdr  = Number(row.cost || 0);
-          const costShown = convertFromIdr(costIdr);
+          const courierIdr = Number(row.cost || 0);
+          const costIdr    = isFree ? 0 : courierIdr;           // gratis ongkir: yang ditagih 0
+          const costShown  = convertFromIdr(costIdr);
+          const priceHtml  = isFree
+            ? `<s style="color:var(--muted)">${formatCurrencyJS(convertFromIdr(courierIdr))}</s> Free`
+            : formatCurrencyJS(costShown);
           const service  = row.service || 'Service';
           const etdText  = row.etd ? `<div class="shipping-service-etd">ETD: ${row.etd}</div>` : '';
           const wrapper  = document.createElement('label');
@@ -1831,7 +1857,7 @@ siteBodyClose();
               <input type="radio" class="shipping-radio" name="shipping_service_option" value="${idx}">
               <div>
                 <div class="shipping-service-name">${service}</div>
-                <div class="shipping-service-price">${formatCurrencyJS(costShown)}</div>
+                <div class="shipping-service-price">${priceHtml}</div>
                 ${etdText}
               </div>
             </div>

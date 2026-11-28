@@ -6,6 +6,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/db_schema.php';
 require_once __DIR__ . '/includes/currency_helper.php';
 require_once __DIR__ . '/includes/layout.php';
+require_once __DIR__ . '/includes/free_shipping.php';
 
 siteHeadOpen([
     'title'       => 'Shipping & Returns',
@@ -25,6 +26,9 @@ siteBodyOpen(['bodyClass' => 'page-shipping', 'searchAction' => 'shop.php']);
 
         <h3 class="doc-label">Shipping cost</h3>
         <p class="doc-text">We ship across Indonesia and worldwide. Enter your address at checkout and you’ll see the courier options and the exact cost before you pay.</p>
+        <?php if (($freeShippingNote = freeShippingSummary(freeShippingSettings($pdo))) !== ''): ?>
+        <p class="doc-text"><strong><?= esc($freeShippingNote) ?></strong></p>
+        <?php endif; ?>
 
         <h3 class="doc-label">International orders</h3>
         <p class="doc-text">Your country may charge tax or import duty on arrival. Read more in the <a href="faq.php">FAQ</a>.</p>
