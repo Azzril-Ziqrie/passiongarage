@@ -72,12 +72,18 @@ function ddApplyMigrations(PDO $pdo, array $pending): void
             if (isset($applied[$name])) {
                 continue;
             }
-            $migration = require $file;
-            if (!is_callable($migration)) {
-                throw new RuntimeException("Migration {$name} must return a callable.");
+            // Satu migrasi gagal tidak boleh menahan migrasi lain: catat errornya, lanjut ke berikutnya,
+            // dan migrasi yang gagal dicoba lagi di request berikutnya (belum tercatat di schema_migrations).
+            try {
+                $migration = require $file;
+                if (!is_callable($migration)) {
+                    throw new RuntimeException('must return a callable');
+                }
+                $migration($pdo);
+                $pdo->prepare('INSERT INTO schema_migrations (name) VALUES (:name)')->execute(['name' => $name]);
+            } catch (Throwable $e) {
+                error_log("[migrate] {$name} failed: " . $e->getMessage());
             }
-            $migration($pdo);
-            $pdo->prepare('INSERT INTO schema_migrations (name) VALUES (:name)')->execute(['name' => $name]);
         }
     } finally {
         $pdo->query("SELECT RELEASE_LOCK('dd_migrations')")->fetchColumn();
